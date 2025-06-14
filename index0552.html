@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8">
+<title>Магазин PODHUB</title>
+<style>
+body {font-family: Arial,sans-serif;padding:20px;color:#333;}
+h1 {color:#007bff;margin-bottom:20px;}
+.container {margin-bottom:20px;padding:20px;background:#f9f9f9;border-radius:10px;}
+.container button {margin-bottom:10px;padding:10px 20px;background:#007bff;color:#ffffff;border:none;border-radius:6px;cursor:pointer;}
+.container button:hover {background:#0056b3;}
+ul {list-style-type: none;padding: 0;margin-bottom: 20px;color:#555;font-weight:bold;}
+form {padding:20px;background:#f9f9f9;border-radius:10px;margin-bottom:20px;}
+form label {display:block;margin-bottom:10px;color:#555;font-weight:bold;}
+form input {width:100%;padding:10px;margin-bottom:15px;border-radius:6px;border:1px solid #ccc;}
+form button {padding:10px 20px;background:#007bff;color:#ffffff;border:none;border-radius:6px;cursor:pointer;}
+form button:hover {background:#0056b3;}
+.carousel-img img {max-width: 200px; display: block; margin-bottom: 15px; border-radius: 8px;}
+.remove-btn {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.remove-btn:hover {
+    background: #b52a37;
+}
+.side-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+</style>
+</head>
+<body>
+
+<div style="display: flex; gap: 40px; align-items: flex-start;">
+
+<!-- Лява част със съдържание -->
+<div class="main-content" style="flex: 2;">
+<h1>Магазин </h1>
+
+<div class="container">
+    <div><h3>AirPod 4 - 130 лв</h3>
+    <button data-name="AirPod 4" data-price="130">Добави в количката</button>
+    <div class="carousel-img">
+        <img src="img/AirPods 4.jfif" alt="AirPod 4"></div>
+    </div>
+<div><h3>AirPod 3 - 150 лв</h3>
+    <button data-name="AirPod 3" data-price="150">Добави в количката</button>
+    <div class="carousel-img">
+        <img src="img/AirPods (3rd generation) with … curated on LTK.jpg" alt="AirPod 3"></div>
+    </div>
+<div><h3>AirPod Pro 2 - 140 лв</h3>
+    <button data-name="AirPod Pro 2" data-price="140">Добави в количката</button>
+    <div class="carousel-img">
+        <img src="img/Apple AirPods Pro 2nd Gen with Enhanced Noise….jpg" alt="AirPod Pro 2"></div>
+    </div>
+</div>
+
+<h2>Количка</h2>
+<ul id="cartList"></ul>
+<p>Общо: <span id="total">0</span> лв</p>
+
+<h2>Детайли за поръчката</h2>
+<form action="https://formspree.io/f/xvgrrorb" method="POST">
+    <label for="first_name">Име:</label>
+    <input id="first_name" name="first_name" required>
+
+    <label for="last_name">Фамилия:</label>
+    <input id="last_name" name="last_name" required>
+
+    <label for="phone">Телефон:</label>
+    <input id="phone" name="phone" required>
+
+    <label for="city">Град:</label>
+    <input id="city" name="city" required>
+
+    <label for="office">Офис на Еконт:</label>
+    <input id="office" name="office" required>
+
+    <input id="ordered_products" name="ordered_products" type="hidden">
+    <input id="total_field" name="total" type="hidden">
+  
+    <button type="submit">Поръчай</button>
+</form>
+</div>
+
+<!-- Дясна част със снимка -->
+<div class="side-image" style="flex: 1;">
+    <img src="img/logo.jpg" alt="PODHUB Лого">
+</div>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const buttons = document.querySelectorAll('.container button');
+        const cartList = document.getElementById('cartList');
+        const total = document.getElementById('total');
+        const orderedProducts = document.getElementById('ordered_products');
+        const totalField = document.getElementById('total_field');
+        let sum = 0;
+        let products = [];
+
+        function updateHiddenFields() {
+            orderedProducts.value = products.join('; ');
+            totalField.value = sum;
+        }
+
+        buttons.forEach(button => {
+            button.addEventListener('click', () => {
+                const name = button.dataset.name;
+                const price = parseInt(button.dataset.price);
+                const productText = `${name} - ${price} лв`;
+
+                sum += price;
+                products.push(productText);
+
+                const li = document.createElement('li');
+                li.textContent = productText;
+
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Премахни';
+                removeBtn.classList.add('remove-btn');
+                removeBtn.addEventListener('click', () => {
+                    cartList.removeChild(li);
+                    sum -= price;
+
+                    const index = products.indexOf(productText);
+                    if (index !== -1) {
+                        products.splice(index, 1);
+                    }
+
+                    total.textContent = sum;
+                    updateHiddenFields();
+                });
+
+                li.appendChild(removeBtn);
+                cartList.prepend(li);
+
+                total.textContent = sum;
+                updateHiddenFields();
+            });
+        });
+    });
+</script>
+
+<meta name="robots" content="noindex">
+</body>
+</html>
